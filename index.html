@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<style>
+	body {background:#222;margin:0px;padding:0px;}
+</style>
+<script>
+(function() {
+let $ = qs => document.querySelector(qs);
+
+let generate = () => {
+	var commands = $('#code').value.split('\n');
+	commands.push('setblock ~ ~ ~1 command_block 0 0 {Command:"fill ~ ~-3 ~-1 ~ ~ ~ air"}');
+	commands.push('setblock ~ ~-1 ~1 redstone_block');
+	commands.push('kill @e[type=commandblock_minecart,r=1]');
+	commands = commands.map(str => `{id:commandblock_minecart,Command:"${str.replace(/\\/g,'\\\\').replace(/"/g,'\\\"')}"}`);
+	$('#result').value = `summon falling_block ~ ~1 ~ {Block:stone,Time:1,Passengers:[{id:falling_block,Block:redstone_block,Time:1,Passengers:[{id:falling_block,Block:activator_rail,Time:1,Passengers:[${commands.join(',')}]}]}]}`;
+}
+
+window.commands = {
+	generate: generate
+}
+})()
+</script>
+<body>
+	<div style='position:absolute;width:900px;height:600px;margin:auto;top:0;left:0;right:0;bottom:0;'>
+		<div style='position:absolute;top:-20px;width:900px;text-align:center;font:14px monospace;color:#fa0'>
+			enter your commands below
+		</div>
+		<textarea id='code' spellcheck="false" style='width:900px;height:600px;border:none;margin:0px;padding:5px;font:14px monospace;background:#111;color:#fa0;resize:none'></textarea>
+		<div style='position:absolute;top:0px;left:-140px'>
+			<input type='button' value='one command!' onclick='commands.generate()'>
+		</div>
+		<div style='position:absolute;bottom:-50px;width:900px'>
+			<input type='text' id='result' spellcheck="false" style='width:900px;border:none;margin:0px;padding:5px;background:#111;font:14px monospace;color:#fa0'>
+		</div>
+	</div>
+</body>
+</html>
